@@ -1,7 +1,7 @@
 
 # Build options
-IMAGE_NAME?="hlds"
-IMAGE_TAG?="alpha"
+IMAGE_NAME?="cstrike-hlds-docker"
+IMAGE_TAG?="latest"
 
 STEAM_USER?="anonymous"
 STEAM_PASSWORD?=""
