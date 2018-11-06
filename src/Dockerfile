@@ -5,7 +5,23 @@ ARG steam_user=anonymous
 ARG steam_password=
 
 
-RUN apt update && apt install -y lib32gcc1 curl
+# Install dependencies
+RUN \
+    apt update \
+    && apt install -y lib32gcc1 curl locales
+
+
+# Set the locale
+RUN \
+    dpkg-reconfigure -f noninteractive tzdata \
+    && sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen \
+    && echo 'LANG="en_US.UTF-8"'>/etc/default/locale \
+    && dpkg-reconfigure --frontend=noninteractive locales \
+    && update-locale LANG=en_US.UTF-8
+
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
 
 
 # Install SteamCMD
