@@ -48,14 +48,14 @@ COPY files/server.cfg /opt/hlds/cstrike/server.cfg
 
 
 # Add default maps
-VOLUME ["/opt/hlds/cstrike/maps"]
 COPY maps/* /opt/hlds/cstrike/maps/
 COPY files/mapcycle.txt /opt/hlds/cstrike/mapcycle.txt
 
 
 # Install metamod
-RUN mkdir -p /opt/hlds/cstrike/addons/metamod/dlls
-RUN curl -sqL "http://prdownloads.sourceforge.net/metamod/metamod-1.20-linux.tar.gz?download" | tar -C /opt/hlds/cstrike/addons/metamod/dlls -zxvf -
+RUN \
+    mkdir -p /opt/hlds/cstrike/addons/metamod/dlls \
+    && curl -sqL "http://prdownloads.sourceforge.net/metamod/metamod-1.20-linux.tar.gz?download" | tar -C /opt/hlds/cstrike/addons/metamod/dlls -zxvf -
 COPY files/liblist.gam /opt/hlds/cstrike/liblist.gam
 # Remove this line if you aren't going to install/use amxmodx and dproto
 COPY files/plugins.ini /opt/hlds/cstrike/addons/metamod/plugins.ini
@@ -68,8 +68,9 @@ COPY files/dproto.cfg /opt/hlds/cstrike/dproto.cfg
 
 
 # Install AMX mod X
-RUN curl -sqL "http://www.amxmodx.org/release/amxmodx-1.8.2-base-linux.tar.gz" | tar -C /opt/hlds/cstrike/ -zxvf -
-RUN curl -sqL "http://www.amxmodx.org/release/amxmodx-1.8.2-cstrike-linux.tar.gz" | tar -C /opt/hlds/cstrike/ -zxvf -
+RUN \
+    curl -sqL "http://www.amxmodx.org/release/amxmodx-1.8.2-base-linux.tar.gz" | tar -C /opt/hlds/cstrike/ -zxvf - \
+    && curl -sqL "http://www.amxmodx.org/release/amxmodx-1.8.2-cstrike-linux.tar.gz" | tar -C /opt/hlds/cstrike/ -zxvf -
 COPY files/maps.ini /opt/hlds/cstrike/addons/amxmodx/configs/maps.ini
 
 
