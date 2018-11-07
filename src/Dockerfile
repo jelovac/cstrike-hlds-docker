@@ -8,7 +8,7 @@ ARG steam_password=
 # Install dependencies
 RUN \
     apt update \
-    && apt install -y lib32gcc1 curl locales
+    && apt install -y lib32gcc1 curl locales grep
 
 
 # Set the locale
@@ -40,7 +40,6 @@ RUN \
     && mkdir -p ~/.steam && ln -s /opt/hlds ~/.steam/sdk32 \
     && ln -s /opt/steam/ /opt/hlds/steamcmd \
     && echo "10" > /opt/hlds/steam_appid.txt
-COPY scripts/hlds_run.sh /usr/local/bin/hlds_run
 
 
 # Add default config
@@ -75,4 +74,5 @@ COPY files/maps.ini /opt/hlds/cstrike/addons/amxmodx/configs/maps.ini
 
 
 WORKDIR /opt/hlds
-ENTRYPOINT ["hlds_run"]
+COPY scripts/entrypoint.sh /docker-entrypoint.sh
+ENTRYPOINT ["/docker-entrypoint.sh"]
