@@ -61,8 +61,3 @@ test:
       -w /usr/src/app 
       python:2.7 
       python smoke.py
-
-release:
-  stage: release
-  script:
-    -
