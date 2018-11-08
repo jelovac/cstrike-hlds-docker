@@ -51,7 +51,7 @@ test:
       --network ${DOCKER_NETWORK} 
       --name ${TEST_CONTAINER_NAME} 
       $BUILD_IMAGE
-    - docker run -it -rm
+    - docker run -it --rm
       --network ${DOCKER_NETWORK} 
       -e HLDS_ADDRESS=${TEST_CONTAINER_NAME} 
       -e HLDS_PORT=${TEST_CONTAINER_PORT}
