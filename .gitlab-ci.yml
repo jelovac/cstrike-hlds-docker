@@ -34,10 +34,11 @@ before_script:
   - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY 
 
 build:
-  stage: build
+  stage: build    
   script:
-    - docker run --rm -v ${PWD}:/code --entrypoint sh koalaman/shellcheck:stable -c "find /code/ -type f -name '*.sh' | xargs shellcheck"
-    - docker build --pull --tag $BUILD_IMAGE src/.
+    - alias shellcheck='docker run --rm -v $(pwd):/code --entrypoint sh koalaman/shellcheck:stable'
+    - find $(pwd) -type f -name '*.sh' | xargs shellcheck
+    - docker build --pull --no-cache --tag $BUILD_IMAGE src/.
     - docker push $BUILD_IMAGE
 
 test:
@@ -60,3 +61,8 @@ test:
       -w /usr/src/app 
       python:2.7 
       python smoke.py
+
+release:
+  stage: release
+  script:
+    -
