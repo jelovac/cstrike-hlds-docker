@@ -28,10 +28,10 @@ fi
 if [ -n "${SERVER_ADMIN_STEAM_ID}" ]; then
 
     set +e
-    adminAlreadyAdded=$(cat "/opt/hlds/cstrike/addons/amxmodx/configs/users.ini" | grep -c "${SERVER_ADMIN_STEAM_ID}")
+    adminAlreadyAdded=$(grep -c "${SERVER_ADMIN_STEAM_ID}" /opt/hlds/cstrike/addons/amxmodx/configs/users.ini)
     set -e
 
-    if [ $adminAlreadyAdded -eq 0 ]; then
+    if [ "$adminAlreadyAdded" -eq 0 ]; then
         echo "\"STEAM_${SERVER_ADMIN_STEAM_ID}\" \"\"  \"abcdefghijklmnopqrstu\" \"ce\"" > "/opt/hlds/cstrike/addons/amxmodx/configs/users.ini"
     fi
 
