@@ -1,0 +1,62 @@
+image: docker:stable
+
+stages:
+  - build
+  - test
+  - release
+
+variables:
+  # When using dind service we need to instruct docker, to talk with the
+  # daemon started inside of the service. The daemon is available with
+  # a network connection instead of the default /var/run/docker.sock socket.
+  #
+  # The 'docker' hostname is the alias of the service container as described at
+  # https://docs.gitlab.com/ee/ci/docker/using_docker_images.html#accessing-the-services
+  #
+  # Note that if you're using Kubernetes executor, the variable should be set to
+  # tcp://localhost:2375 because of how Kubernetes executor connects services
+  # to the job container
+  DOCKER_HOST: tcp://docker:2375/
+  # When using dind, it's wise to use the overlayfs driver for
+  # improved performance.
+  DOCKER_DRIVER: overlay2
+  BUILD_IMAGE: "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
+  TEST_CONTAINER_NAME: "test_${CI_COMMIT_SHA}"
+  TEST_CONTAINER_PORT: "27015"
+  TEST_SERVER_NAME: "TEST_CS_SERVER_BUILD_ID_$CI_JOB_TOKEN"
+  DOCKER_NETWORK: "test_${CI_JOB_ID}"
+
+services:
+  - docker:dind
+
+before_script:
+  - docker info
+  - docker network create $DOCKER_NETWORK
+
+build:
+  stage: build
+  script:
+    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
+    - docker build --tag $BUILD_IMAGE --target build src/.
+    - docker push $BUILD_IMAGE
+
+test:
+  stage: test
+  script:
+    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
+    - docker pull $BUILD_IMAGE
+    - docker run -d 
+      -p ${TEST_CONTAINER_PORT}:27015/udp 
+      -e SERVER_NAME=${TEST_SERVER_NAME}
+      --network ${DOCKER_NETWORK} 
+      --name ${TEST_CONTAINER_NAME} 
+      $BUILD_IMAGE
+    - docker run -it 
+      --network ${DOCKER_NETWORK} 
+      -e HLDS_ADDRESS=${TEST_CONTAINER_NAME} 
+      -e HLDS_PORT=${TEST_CONTAINER_PORT}
+      -e HLDS_NAME=${TEST_SERVER_NAME}
+      -v ./tests/smoke.py:/usr/src/app/smoke.py:ro 
+      -w /usr/src/app 
+      python:2.7 
+      ./smoke.py
