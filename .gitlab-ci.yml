@@ -59,4 +59,4 @@ test:
       -v ./tests/smoke.py:/usr/src/app/smoke.py:ro 
       -w /usr/src/app 
       python:2.7 
-      ./smoke.py
+      python smoke.py
