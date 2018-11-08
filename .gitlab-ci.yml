@@ -36,7 +36,9 @@ services:
 shellcheck:
   image: koalaman/shellcheck-alpine
   stage: build
-  script: shellcheck $(pwd)/*/*.sh
+  script: 
+    - shellcheck src/*/*.sh
+    - shellcheck tests/*/*.sh
 
 
 build-image:
