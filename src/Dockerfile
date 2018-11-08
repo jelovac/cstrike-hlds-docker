@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM debian:stable
 
 
 ARG steam_user=anonymous
@@ -7,21 +7,11 @@ ARG steam_password=
 
 # Install dependencies
 RUN \
-    apt update \
-    && apt install -y lib32gcc1 curl locales grep
-
-
-# Set the locale
-RUN \
-    dpkg-reconfigure -f noninteractive tzdata \
-    && sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen \
-    && echo 'LANG="en_US.UTF-8"'>/etc/default/locale \
-    && dpkg-reconfigure --frontend=noninteractive locales \
-    && update-locale LANG=en_US.UTF-8
-
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
+    apt-get update \
+    && apt-get install -y lib32gcc1 curl locales grep \
+    && rm -rf /var/lib/apt/lists/* \
+    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+ENV LANG en_US.utf8
 
 
 # Install SteamCMD
