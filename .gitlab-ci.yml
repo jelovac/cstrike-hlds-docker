@@ -31,27 +31,26 @@ services:
 
 before_script:
   - docker info
-  - docker network create $DOCKER_NETWORK
+  - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY 
 
 build:
   stage: build
   script:
-    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker build --tag $BUILD_IMAGE src/.
+    - docker build --pull --tag $BUILD_IMAGE src/.
     - docker push $BUILD_IMAGE
 
 test:
   stage: test
   script:
-    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
     - docker pull $BUILD_IMAGE
+    - docker network create $DOCKER_NETWORK
     - docker run -d 
       -p ${TEST_CONTAINER_PORT}:27015/udp 
       -e SERVER_NAME=${TEST_SERVER_NAME}
       --network ${DOCKER_NETWORK} 
       --name ${TEST_CONTAINER_NAME} 
       $BUILD_IMAGE
-    - docker run -it --rm
+    - docker run -tt
       --network ${DOCKER_NETWORK} 
       -e HLDS_ADDRESS=${TEST_CONTAINER_NAME} 
       -e HLDS_PORT=${TEST_CONTAINER_PORT}
