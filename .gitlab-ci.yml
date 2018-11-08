@@ -1,9 +1,11 @@
 image: docker:stable
 
+
 stages:
   - build
   - test
   - release
+
 
 variables:
   # When using dind service we need to instruct docker, to talk with the
@@ -26,20 +28,28 @@ variables:
   TEST_SERVER_NAME: "TEST_CS_SERVER_BUILD_ID_$CI_JOB_TOKEN"
   DOCKER_NETWORK: "test_${CI_JOB_ID}"
 
+
 services:
   - docker:dind
+
 
 before_script:
   - docker info
   - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY 
 
-build:
+
+shellcheck:
+  image: koalaman/shellcheck-alpine
+  stage: build
+  script: shellcheck $(pwd)/*/*.sh
+
+
+build-image:
   stage: build    
   script:
-    - alias shellcheck='docker run --rm -v $(pwd):/code --entrypoint sh koalaman/shellcheck:stable'
-    - find $(pwd) -type f -name '*.sh' | xargs shellcheck
     - docker build --pull --no-cache --tag $BUILD_IMAGE src/.
     - docker push $BUILD_IMAGE
+
 
 test:
   stage: test
