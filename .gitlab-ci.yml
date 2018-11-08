@@ -33,11 +33,6 @@ services:
   - docker:dind
 
 
-before_script:
-  - docker info
-  - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY 
-
-
 shellcheck:
   image: koalaman/shellcheck-alpine
   stage: build
@@ -45,7 +40,10 @@ shellcheck:
 
 
 build-image:
-  stage: build    
+  stage: build
+  before_script:
+    - docker info
+    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
   script:
     - docker build --pull --no-cache --tag $BUILD_IMAGE src/.
     - docker push $BUILD_IMAGE
@@ -53,6 +51,9 @@ build-image:
 
 test:
   stage: test
+  before_script:
+    - docker info
+    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
   script:
     - docker pull $BUILD_IMAGE
     - docker network create $DOCKER_NETWORK
