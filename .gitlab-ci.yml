@@ -51,12 +51,12 @@ test:
       --network ${DOCKER_NETWORK} 
       --name ${TEST_CONTAINER_NAME} 
       $BUILD_IMAGE
-    - docker run -it 
+    - docker run -it -rm
       --network ${DOCKER_NETWORK} 
       -e HLDS_ADDRESS=${TEST_CONTAINER_NAME} 
       -e HLDS_PORT=${TEST_CONTAINER_PORT}
       -e HLDS_NAME=${TEST_SERVER_NAME}
-      -v ./tests/smoke.py:/usr/src/app/smoke.py:ro 
+      -v ${PWD}/tests/smoke.py:/usr/src/app/smoke.py:ro 
       -w /usr/src/app 
       python:2.7 
       python smoke.py
