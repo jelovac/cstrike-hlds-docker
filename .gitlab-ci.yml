@@ -83,5 +83,6 @@ deploy-to-gitlab-registry:
     - docker info
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
   script:
+    - docker pull $BUILD_IMAGE_TAG 
     - docker tag $BUILD_IMAGE_TAG ${CI_REGISTRY_IMAGE}:latest
     - docker push ${CI_REGISTRY_IMAGE}:latest
