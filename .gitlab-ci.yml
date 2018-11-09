@@ -23,7 +23,7 @@ variables:
   # improved performance.
   DOCKER_DRIVER: overlay2
   # Docker image tag which is going to be built by the CI pipeline
-  BUILD_IMAGE: "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
+  BUILD_IMAGE_TAG: "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
 
 
 services:
@@ -43,8 +43,8 @@ build-image:
     - docker info
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
   script:
-    - docker build --pull --no-cache --tag $BUILD_IMAGE src/.
-    - docker push $BUILD_IMAGE
+    - docker build --pull --no-cache --tag $BUILD_IMAGE_TAG src/.
+    - docker push $BUILD_IMAGE_TAG
 
 
 smoke-test:
@@ -58,14 +58,14 @@ smoke-test:
     - docker info
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
   script:
-    - docker pull $BUILD_IMAGE
+    - docker pull $BUILD_IMAGE_TAG
     - docker network create $HLDS_DOCKER_NETWORK_NAME
     - docker run -d 
       -p ${HLDS_CONTAINER_PORT}:27015/udp 
       -e SERVER_NAME=${HLDS_SERVER_NAME}
       --network ${HLDS_DOCKER_NETWORK_NAME} 
       --name ${HLDS_CONTAINER_NAME} 
-      $BUILD_IMAGE
+      $BUILD_IMAGE_TAG
     - docker run -tt
       --network ${HLDS_DOCKER_NETWORK_NAME} 
       -e HLDS_ADDRESS=${HLDS_CONTAINER_NAME} 
@@ -83,5 +83,5 @@ deploy-to-gitlab-registry:
     - docker info
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
   script:
-    - docker tag $BUILD_IMAGE ${CI_REGISTRY_IMAGE}:latest
+    - docker tag $BUILD_IMAGE_TAG ${CI_REGISTRY_IMAGE}:latest
     - docker push ${CI_REGISTRY_IMAGE}:latest
