@@ -102,9 +102,9 @@ deploy-to-dockerhub-registry:
   except:
     - /^(?!.*(release|v?\d+\.\d+\.\d+)$).*$/
   variables:
-    REGISTRY_API_USER: $DOCKERHUB_REGISTRY_USER
-    REGISTRY_API_PASSWORD: $DOCKERHUB_REGISTRY_USER_PASSWORD
-    REGISTRY_API_URL: $DOCKERHUB_REGISTRY_API_URL
+    REGISTRY_API_USER: $DOCKERHUB_USER
+    REGISTRY_API_PASSWORD: $DOCKERHUB_PASSWORD
+    REGISTRY_API_URL: $DOCKERHUB_URL
   before_script:
     - docker info
     - docker login -u "${REGISTRY_API_USER}" -p "${REGISTRY_API_PASSWORD}" ${REGISTRY_API_URL}
