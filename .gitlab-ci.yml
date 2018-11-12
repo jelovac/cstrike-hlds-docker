@@ -31,7 +31,7 @@ variables:
 services:
   - docker:dind
 
-  
+
 shellcheck:
   image: koalaman/shellcheck-alpine
   stage: build
@@ -46,7 +46,7 @@ build-image:
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
   script:
     - docker build --pull --no-cache --tag $BUILD_IMAGE_TAG src/.
-    - docker image save ${BUILD_IMAGE_ARTIFACT_LOCATION} $BUILD_IMAGE_TAG
+    - docker image save $BUILD_IMAGE_TAG > ${BUILD_IMAGE_ARTIFACT_LOCATION}
   artifacts:
     paths:
       - ${BUILD_IMAGE_ARTIFACT_LOCATION}
