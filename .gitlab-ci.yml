@@ -49,7 +49,7 @@ build-image:
     - docker image save ${BUILD_IMAGE_ARTIFACT_LOCATION} $BUILD_IMAGE_TAG
   artifacts:
     paths:
-      - build/${CI_JOB_ID}-docker-image.tar
+      - ${BUILD_IMAGE_ARTIFACT_LOCATION}
 
 
 smoke-test:
