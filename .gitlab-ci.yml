@@ -92,3 +92,24 @@ deploy-to-gitlab-registry:
     - docker push $BUILD_IMAGE_TAG
     - docker tag $BUILD_IMAGE_TAG ${CI_REGISTRY_IMAGE}:latest
     - docker push ${CI_REGISTRY_IMAGE}:latest
+
+
+deploy-to-dockerhub-registry:
+  stage: release
+  when: manual
+  only:
+    - /^v?\d+\.\d+\.\d+$/
+  except:
+    - /^(?!.*(release|v?\d+\.\d+\.\d+)$).*$/
+  variables:
+    REGISTRY_API_USER: $DOCKERHUB_REGISTRY_USER
+    REGISTRY_API_PASSWORD: $DOCKERHUB_REGISTRY_USER_PASSWORD
+    REGISTRY_API_URL: $DOCKERHUB_REGISTRY_API_URL
+  before_script:
+    - docker info
+    - docker login -u "${REGISTRY_API_USER}" -p "${REGISTRY_API_PASSWORD}" ${REGISTRY_API_URL}
+  script:
+    - docker pull --no-cache ${BUILD_IMAGE_TAG}
+    - docker tag ${BUILD_IMAGE_TAG} ${REGISTRY_API_URL}:${CI_COMMIT_REF_NAME}
+    - docker push ${REGISTRY_API_URL}:${CI_COMMIT_REF_NAME}
+    
