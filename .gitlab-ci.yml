@@ -107,7 +107,7 @@ deploy-to-dockerhub-registry:
     REGISTRY_API_URL: $DOCKERHUB_URL
   before_script:
     - docker info
-    - docker login -u "${REGISTRY_API_USER}" -p "${REGISTRY_API_PASSWORD}" ${REGISTRY_API_URL}
+    - echo "${REGISTRY_API_PASSWORD}" | docker login -u "${REGISTRY_API_USER}" --password-stdin ${REGISTRY_API_URL}
   script:
     - docker pull --no-cache ${BUILD_IMAGE_TAG}
     - docker tag ${BUILD_IMAGE_TAG} ${REGISTRY_API_URL}:${CI_COMMIT_REF_NAME}
