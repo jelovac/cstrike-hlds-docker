@@ -32,6 +32,11 @@ services:
   - docker:dind
 
 
+before_script:
+  # Create build directory if it doesn't exist
+  - mkdir -p build
+
+
 shellcheck:
   image: koalaman/shellcheck-alpine
   stage: build
