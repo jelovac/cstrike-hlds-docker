@@ -1,0 +1,1 @@
+The following directory is used to store build data.
