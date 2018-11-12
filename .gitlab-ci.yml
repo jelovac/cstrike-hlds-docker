@@ -46,7 +46,7 @@ build-image:
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
   script:
     - docker build --pull --no-cache --tag $BUILD_IMAGE_TAG src/.
-    - docker image save $BUILD_IMAGE_TAG ${BUILD_IMAGE_ARTIFACT_LOCATION}
+    - docker image save ${BUILD_IMAGE_ARTIFACT_LOCATION} $BUILD_IMAGE_TAG
   artifacts:
     paths:
       - build/${CI_JOB_ID}-docker-image.tar
