@@ -23,7 +23,7 @@ variables:
   # improved performance.
   DOCKER_DRIVER: overlay2
   # Docker image tag which is going to be built by the CI pipeline
-  BUILD_IMAGE_TAG: "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
+  BUILD_IMAGE_TAG: "${CI_REGISTRY_IMAGE}:-${CI_COMMIT_SHA}"
   # The location where the image should be built and its artifact stored
   BUILD_IMAGE_ARTIFACT_LOCATION: "build/${CI_JOB_ID}-docker-image.tar"
 
@@ -46,7 +46,7 @@ build-image:
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
   script:
     - docker build --pull --no-cache --tag $BUILD_IMAGE_TAG src/.
-    - docker image save $BUILD_IMAGE_TAG build/${CI_JOB_ID}.tar
+    - docker image save $BUILD_IMAGE_TAG ${BUILD_IMAGE_ARTIFACT_LOCATION}
   artifacts:
     paths:
       - build/${CI_JOB_ID}-docker-image.tar
